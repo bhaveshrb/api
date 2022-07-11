@@ -33,6 +33,7 @@ app.get('/stud/:id',(req,res)=>{
 app.use('/auth',AuthRoutes);
 app.use('/stud/users',UsersRoutes);
 
+
 // {
 //   "name": "khhj",
 //   id: 8

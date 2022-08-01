@@ -4,9 +4,11 @@ import db from './app/config/database.js';
 import Express from 'express';
 import UsersRoutes from './app/routes/users.route.js';
 import AuthRoutes from './app/routes/auth.route.js';
+import { config } from './app/config/index.js';
 const app = Express();
+ 
 app.use(Express.json()); // TO GET BODY IN REQUEST
-app.listen(5432,()=>{
+app.listen(config.port,()=>{
   console.log("Server now listening at port 8080");
 })
 

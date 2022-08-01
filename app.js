@@ -6,7 +6,7 @@ import UsersRoutes from './app/routes/users.route.js';
 import AuthRoutes from './app/routes/auth.route.js';
 const app = Express();
 app.use(Express.json()); // TO GET BODY IN REQUEST
-app.listen(8080,()=>{
+app.listen(5432,()=>{
   console.log("Server now listening at port 8080");
 })
 

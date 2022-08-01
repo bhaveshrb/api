@@ -31,34 +31,21 @@ export const getUsers = async (request, response) =>{
 }
 
 export const getUser = async(request, response) =>{
-    let res = [];
-    try{
-         db.client.query(`select * from stud where id=${request.params.id}`,(err,result)=>{
-            //console.log(result);
-            if(!err){
-                res = result.rows;
-                console.log(result.rows);
-            }
-           
-        });
-        console.log(res);
-        // if(result.length === 1){
-            
-        //     const user = result[0];
-        //     //delete user['password'];
-        //     return response.status(HTTP_STATUS_CODES.OK).send({
-        //         result:{
-        //             ...user
-        //         },
-        //         status: HTTP_STATUS_CODES.OK,
-        //         message: 'Users fetched sucessfully.'
-        //     })
-        // }else{
-        //     return response.status(HTTP_STATUS_CODES.NOT_FOUND).send({
-        //         message:'No user found with such ID'
-        //     })    
-        // }
-    }catch(error){
+   
+    try {
+        await db.client.query(`select * from stud where id = '${request.params.id}'`).then(res=>{
+           let user = res.rows[0];
+               delete user['password']
+               return response.status(HTTP_STATUS_CODES.OK).send({
+                   result: {
+                        ...user
+                   },
+                   status:HTTP_STATUS_CODES.OK,
+                   message:"Loged in successfully."
+               })
+       })
+    }
+       catch(error){
         return response.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).send({
             message:"error|| ERROR_MESSAGE.INTERNAL_SERVER_ERROR"
         })
@@ -68,15 +55,16 @@ export const getUser = async(request, response) =>{
 export const updateUser = async (request, response) =>{
     const { body } = request;
     try{
-        const [result] = await db.client.query(`
-            UPDATE users
-                SET first_name = '${body.first_name}', 
-                    email = '${body.email}',
-                    mobile = '${body.mobile}',
-                    last_name = '${body.last_name}'
+         await db.client.query(`select * from stud where id = ${request.params.id}`).then(res=>{
+            db.client.query(`
+            UPDATE stud
+                SET  
+                    email = '${body.email}'
+                   
                 WHERE id='${request.params.id}'
         `);
-        if(result){
+            
+          if(res.rows.length===1){
             return response.status(HTTP_STATUS_CODES.OK).send({
                 result:{
                     ...body
@@ -84,24 +72,49 @@ export const updateUser = async (request, response) =>{
                 status: HTTP_STATUS_CODES.OK,
                 message: 'User updated sucessfully.'
             })
-        }else{
+        
+          }
+          else{
             return response.status(HTTP_STATUS_CODES.NOT_FOUND).send({
-                message:'No user found with such ID'
-            })    
-        }
+                message:'No user found'
+            })   
+          }
+         })
+        
     }catch(error){
+        console.log(error);
         return response.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).send({
             message:error|| ERROR_MESSAGE.INTERNAL_SERVER_ERROR
         })
     }
 }
 
-export const deleteUser = (request, response) =>{
-    return response.status(HTTP_STATUS_CODES.OK).send({
-        status: 200,
-        message: '',
-        results: {}
+export const deleteUser = async (request, response) =>{
+    const {body} = request;
+ try{
+    await db.client.query(`select * from stud where id = ${request.params.id}`).then(res=>{
+    db.client.query(`delete from stud where id = ${request.params.id}`);
+      if(res.rows.length===1){
+        return response.status(HTTP_STATUS_CODES.OK).send({
+            result: {
+                 ...body
+            },
+            status:HTTP_STATUS_CODES.OK,
+            message:"Delete successfully."
+        })
+      }
+      else{
+        return response.status(HTTP_STATUS_CODES.NOT_FOUND).send({
+            message:'No user found'
+        })  
+      }   
     })
+ }
+ catch(error){
+    return response.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).send({
+        message:"error|| ERROR_MESSAGE.INTERNAL_SERVER_ERROR"
+    })
+}
 }
 
 export const dashboard = async(request,response) =>{

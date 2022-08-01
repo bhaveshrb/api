@@ -1,6 +1,7 @@
 import * as AuthController from '../controllers/auth.controller.js';
 import ValidatorService from '../services/validation.service.js';
 import validationMiddleware from '../middlewares/validation.middleware.js';
+import auth from '../middlewares/auth.middleware.js';
 import express from 'express';
 
 let router = express.Router();
@@ -19,5 +20,7 @@ router.post("/signup",
 ],
     validationMiddleware,
     AuthController.signup)
+
+
 
 export default router;

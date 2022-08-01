@@ -9,11 +9,12 @@ export const login = (request, response) => {
 
     try {
          db.client.query(`select * from stud where email = '${body.email}'`).then(res=>{
-           
+            let user = res.rows[0];
+            if(BcryptService.compare(body.password,user.password)){
                 const token = AuthService.issueToken({
                     id:res.id
                 })
-                //delete res.password
+                delete user['password']
                 return response.status(HTTP_STATUS_CODES.OK).send({
                     result:{
                         token,
@@ -22,6 +23,12 @@ export const login = (request, response) => {
                     status:HTTP_STATUS_CODES.OK,
                     message:"Loged in successfully."
                 })
+            }else{
+                response.status(HTTP_STATUS_CODES.UNAUTHORIZED).send({
+                    message:ERROR_MESSAGE.UNAUTHORIZED
+                })
+            }
+               
             
         }).catch(err=>{
            return response.status(HTTP_STATUS_CODES.UNAUTHORIZED).send({

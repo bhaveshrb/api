@@ -6,7 +6,11 @@ const client = new pg.Client({
     port: 5432,
     user: "postgres",
     password:"bhavesh",
-    database:"test"
+    database:"test",
+    connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false
+  }
 });
 
 client.on("connect",()=>{

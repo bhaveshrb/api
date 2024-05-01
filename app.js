@@ -5,8 +5,11 @@ import { config } from './app/config/index.js';
 const app = Express();
  
 app.use(Express.json()); // TO GET BODY IN REQUEST
-app.listen(config.port,()=>{
+app.listen(8080,()=>{
   console.log("Server now listening at port 8080");
+})
+app.use("/", (req, res) => {
+return res.status(200).send("Server running successfully")
 })
 
 //console.log(client);
